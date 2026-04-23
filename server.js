@@ -40,10 +40,11 @@ const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
 app.use(
   cors({
     origin: (origin, cb) => {
-      // 允许 file:// 协议（origin 为 null）和 localhost（开发环境）
-      if (!origin && IS_DEV) return cb(null, true);
-      if (!origin) return cb(new Error('No origin'));
+      // 无 Origin 头：直接导航、服务端调用、curl 等，一律放行
+      if (!origin) return cb(null, true);
+      // 明确在白名单中
       if (allowedOrigins.includes(origin)) return cb(null, true);
+      // 开发环境允许所有 localhost
       if (IS_DEV && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
         return cb(null, true);
       }
