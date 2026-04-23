@@ -1163,9 +1163,13 @@ function initUpload() {
     handleFileUpload(file);
   });
 
-  // 全页面拖拽时防止浏览器默认打开文件
-  document.addEventListener('dragover', (e) => e.preventDefault());
-  document.addEventListener('drop', (e) => e.preventDefault());
+  // 全页面拖拽时只阻止默认行为（防止浏览器打开文件），但不阻断拖拽区自己的 drop
+  document.addEventListener('dragover', (e) => {
+    if (!e.target.closest('#dropZone')) e.preventDefault();
+  });
+  document.addEventListener('drop', (e) => {
+    if (!e.target.closest('#dropZone')) e.preventDefault();
+  });
 }
 
 async function handleFileUpload(file) {
