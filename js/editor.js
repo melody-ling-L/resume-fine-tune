@@ -662,16 +662,33 @@ function exportPDF() {
     margin: 0,
     filename: `${resumeData.personal.name}_简历.pdf`,
     image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true, logging: false },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      // 必须捕获完整高度，不受 overflow:hidden 裁剪
+      windowWidth: 794,
+      scrollY: 0,
+    },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    // 尽量避免在段落/条目中间分页
+    pagebreak: { mode: ['avoid-all', 'css'] },
   };
 
-  // 临时脱离缩放
+  // 临时脱离缩放 + 解除 overflow 裁剪，让 html2canvas 能捕获完整内容
+  const prevTransform = el.style.transform;
+  const prevOverflow = el.style.overflow;
   el.style.transform = 'none';
+  el.style.overflow = 'visible';
+
   html2pdf().set(opt).from(el).save().then(() => {
     showToast('✅ PDF 已导出！', 'success');
   }).catch(() => {
     showToast('❌ 导出失败，请重试', 'error');
+  }).finally(() => {
+    // 还原样式
+    el.style.transform = prevTransform;
+    el.style.overflow = prevOverflow;
   });
 }
 

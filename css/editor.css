@@ -257,7 +257,30 @@
   line-height: 1.6;
   box-shadow: 0 10px 60px rgba(0,0,0,0.5);
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* 预览时裁掉超出，导出时由 JS 临时改为 visible */
+}
+
+/* ── 防止导出 PDF 时从条目中间分页截断 ── */
+.exp-item, .edu-item, .proj-item, .award-item,
+.tpl-classic-view .exp-item,
+.tpl-classic-view .edu-item,
+.tpl-classic-view .proj-item,
+.tpl-modern-view .exp-item,
+.tpl-modern-view .edu-item,
+.tpl-modern-view .proj-item,
+.tpl-minimal-view .exp-item,
+.tpl-minimal-view .edu-item,
+.tpl-minimal-view .proj-item {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.resume-section {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.section-heading {
+  page-break-after: avoid;
+  break-after: avoid;
 }
 
 /* 空状态占位 */
