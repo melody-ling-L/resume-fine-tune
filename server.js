@@ -42,14 +42,14 @@ app.use(
     origin: (origin, cb) => {
       // 无 Origin 头：直接导航、curl 等，放行
       if (!origin) return cb(null, true);
-      // 同域请求（前后端同一个 Railway 域名）：自动放行
-      if (allowedOrigins.includes(origin)) return cb(null, true);
-      // 开发环境允许所有 localhost
-      if (IS_DEV && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+      // 允许所有 localhost（开发环境）
+      if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
         return cb(null, true);
       }
-      // 生产环境：若未配置白名单则也放行同服务请求（Railway 同域部署）
-      if (!IS_DEV && allowedOrigins.length === 0) return cb(null, true);
+      // 白名单命中
+      if (allowedOrigins.includes(origin)) return cb(null, true);
+      // 未配置白名单时放行所有（Railway 同域部署场景，前后端同一个域名）
+      if (allowedOrigins.length === 0) return cb(null, true);
       cb(new Error('Not allowed by CORS'));
     },
     credentials: true,

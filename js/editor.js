@@ -58,6 +58,12 @@ function init() {
   setupSectionToggles();
   initTemplatePicker();
   initUpload();
+
+  // 提前初始化 pdf.js worker（避免首次上传时加载慢或失败）
+  if (typeof pdfjsLib !== 'undefined') {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
 }
 
 // ───────────────────────────────────────────
@@ -1242,19 +1248,27 @@ async function extractPdfText(file) {
   if (typeof pdfjsLib === 'undefined') {
     throw new Error('PDF 解析库未加载，请刷新页面后重试');
   }
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-  const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  let text = '';
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const content = await page.getTextContent();
-    const pageText = content.items.map(item => item.str).join(' ');
-    text += pageText + '\n';
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    // pdf.js 3.x 需要传 Uint8Array
+    const typedArray = new Uint8Array(arrayBuffer);
+    const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise;
+    let text = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      const pageText = content.items.map(item => item.str).join(' ');
+      text += pageText + '\n';
+    }
+    return text;
+  } catch (err) {
+    console.error('[PDF Extract Error]', err);
+    if (err.message && err.message.includes('worker')) {
+      throw new Error('PDF Worker 加载失败，请确保网络正常后刷新重试');
+    }
+    throw new Error(`PDF 读取失败：${err.message || '未知错误'}`);
   }
-  return text;
 }
 
 async function extractDocxText(file) {
