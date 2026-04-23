@@ -1217,6 +1217,12 @@ async function handleFileUpload(file) {
       body: JSON.stringify({ resumeText: text.slice(0, 15000) }),
     });
 
+    // 若服务器重启导致 token 失效，服务端会自动创建新 token 并通过此 header 返回
+    const newToken = res.headers.get('X-New-Session-Token');
+    if (newToken) {
+      localStorage.setItem('jy_session_token', newToken);
+    }
+
     const json = await res.json();
 
     if (!res.ok) {

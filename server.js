@@ -53,7 +53,7 @@ app.use(
       cb(new Error('Not allowed by CORS'));
     },
     credentials: true,
-    exposedHeaders: ['X-Credits-Remaining'],
+    exposedHeaders: ['X-Credits-Remaining', 'X-New-Session-Token'],
   })
 );
 
@@ -101,10 +101,12 @@ function createSession() {
 
 function requireSession(req, res) {
   const token = req.headers['x-session-token'];
-  const session = token ? sessions.get(token) : null;
+  let session = token ? sessions.get(token) : null;
   if (!session) {
-    res.status(401).json({ error: '会话无效，请刷新页面重试' });
-    return null;
+    // token 过期（服务器重启）或缺失时，自动创建新会话，避免返回 401
+    session = createSession();
+    // 通过响应头告知客户端新 token，客户端可更新 localStorage
+    res.setHeader('X-New-Session-Token', session.token);
   }
   return session;
 }
