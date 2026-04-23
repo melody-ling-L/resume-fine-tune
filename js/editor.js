@@ -666,29 +666,31 @@ function exportPDF() {
       scale: 2,
       useCORS: true,
       logging: false,
-      // 必须捕获完整高度，不受 overflow:hidden 裁剪
-      windowWidth: 794,
       scrollY: 0,
+      // 不要覆盖 windowWidth，保持页面原始宽度避免内容左侧截断
     },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    // 尽量避免在段落/条目中间分页
-    pagebreak: { mode: ['avoid-all', 'css'] },
+    // 仅防止单个条目从中间分页，不锁整个 section
+    pagebreak: { mode: 'css' },
   };
 
-  // 临时脱离缩放 + 解除 overflow 裁剪，让 html2canvas 能捕获完整内容
+  // 临时脱离缩放，同时解除外层和内层 .resume-tpl 的 overflow 裁剪
+  const tplEl = el.querySelector('.resume-tpl');
   const prevTransform = el.style.transform;
   const prevOverflow = el.style.overflow;
+  const prevTplOverflow = tplEl ? tplEl.style.overflow : '';
   el.style.transform = 'none';
   el.style.overflow = 'visible';
+  if (tplEl) tplEl.style.overflow = 'visible';
 
   html2pdf().set(opt).from(el).save().then(() => {
     showToast('✅ PDF 已导出！', 'success');
   }).catch(() => {
     showToast('❌ 导出失败，请重试', 'error');
   }).finally(() => {
-    // 还原样式
     el.style.transform = prevTransform;
     el.style.overflow = prevOverflow;
+    if (tplEl) tplEl.style.overflow = prevTplOverflow;
   });
 }
 

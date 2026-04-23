@@ -274,10 +274,7 @@
   page-break-inside: avoid;
   break-inside: avoid;
 }
-.resume-section {
-  page-break-inside: avoid;
-  break-inside: avoid;
-}
+/* section 标题不单独留在页尾 */
 .section-heading {
   page-break-after: avoid;
   break-after: avoid;
