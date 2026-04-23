@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>简历优化 — AI 驱动的专业简历优化平台</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ===== 导航栏 ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">✦</span>
+        <span>简历优化</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="#features">功能介绍</a>
+        <a href="#how-it-works">使用方式</a>
+        <a href="#templates">模板预览</a>
+        <a href="editor.html" class="btn btn-primary">开始优化 →</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="菜单">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== Hero 区域 ===== -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="container hero-inner">
+
+      <!-- 左侧文字 -->
+      <div class="hero-text">
+        <div class="pill-badge">✨ AI 大模型驱动 · 免费使用</div>
+        <h1>让你的简历<br /><span class="gradient-text">脱颖而出</span></h1>
+        <p class="hero-desc">
+          利用 DeepSeek 大模型技术，智能分析优化简历内容，<br />
+          提升 ATS 通过率，让 HR 第一眼就注意到你。
+        </p>
+        <div class="hero-actions">
+          <a href="editor.html" class="btn btn-primary btn-lg">立即免费开始 →</a>
+          <a href="#how-it-works" class="btn btn-ghost btn-lg">查看演示</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-num" data-target="10000">0</span>
+            <span class="stat-suffix">+</span>
+            <span class="stat-label">简历已优化</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-num" data-target="85">0</span>
+            <span class="stat-suffix">%</span>
+            <span class="stat-label">面试率提升</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-num" data-target="50">0</span>
+            <span class="stat-suffix">+</span>
+            <span class="stat-label">专业模板</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧视觉 -->
+      <div class="hero-visual">
+        <div class="resume-card">
+          <!-- 评分徽章 -->
+          <div class="score-badge">
+            <svg viewBox="0 0 80 80" class="score-ring-svg">
+              <circle cx="40" cy="40" r="34" class="ring-bg" />
+              <circle cx="40" cy="40" r="34" class="ring-fill" style="stroke-dasharray: 193; stroke-dashoffset: 23;" />
+            </svg>
+            <div class="score-center">
+              <span class="score-num">92</span>
+              <span class="score-label">分</span>
+            </div>
+          </div>
+
+          <!-- 模拟简历预览 -->
+          <div class="mock-resume">
+            <div class="mock-head">
+              <div class="mock-avatar"></div>
+              <div class="mock-info">
+                <div class="mock-line l-lg"></div>
+                <div class="mock-line l-md"></div>
+                <div class="mock-line l-sm"></div>
+              </div>
+            </div>
+            <div class="mock-section">
+              <div class="mock-section-title"></div>
+              <div class="mock-line l-lg"></div>
+              <div class="mock-line l-md"></div>
+              <div class="mock-line l-lg"></div>
+              <div class="mock-line l-sm"></div>
+            </div>
+            <div class="mock-section">
+              <div class="mock-section-title"></div>
+              <div class="mock-line l-lg"></div>
+              <div class="mock-line l-md"></div>
+            </div>
+            <div class="mock-tags">
+              <div class="mock-tag"></div>
+              <div class="mock-tag"></div>
+              <div class="mock-tag"></div>
+              <div class="mock-tag t-short"></div>
+            </div>
+          </div>
+
+          <!-- AI 建议悬浮卡 -->
+          <div class="ai-tip">
+            <span class="ai-tip-icon">🤖</span>
+            <span>AI建议：增加量化数据可提升15分</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== 功能介绍 ===== -->
+  <section id="features" class="features-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>强大功能，一站式简历优化</h2>
+        <p>从填写到优化到导出，全流程 AI 辅助</p>
+      </div>
+      <div class="feature-grid">
+
+        <div class="feature-card featured">
+          <div class="feature-icon">🤖</div>
+          <h3>AI 智能优化</h3>
+          <p>接入 DeepSeek 大模型，自动分析简历内容，提供专业措辞建议，让经历表达更有力。</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📝</div>
+          <h3>提示词模板</h3>
+          <p>提供精选提示词模板，填写关键信息后 AI 自动生成高质量内容，告别不知如何下笔。</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>ATS 关键词分析</h3>
+          <p>粘贴目标岗位 JD，AI 自动匹配关键词，确保简历通过企业自动筛选系统。</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⭐</div>
+          <h3>多维度评分</h3>
+          <p>从内容完整性、量化数据、关键词密度等多角度评估，精准找到改进方向。</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3>专业模板库</h3>
+          <p>多款精美模板，覆盖互联网、金融、设计等行业，实时切换预览，一键套用。</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📄</div>
+          <h3>一键导出 PDF</h3>
+          <p>编辑完成后一键导出高质量 PDF，完美保留排版格式，可直接投递。</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 使用步骤 ===== -->
+  <section id="how-it-works" class="steps-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>三步搞定简历优化</h2>
+        <p>简单快速，专业有效</p>
+      </div>
+      <div class="steps-row">
+
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <h3>填写简历内容</h3>
+          <p>使用结构化表单，填写个人信息、工作经历、教育背景、技能等，支持直接粘贴已有简历内容。</p>
+        </div>
+
+        <div class="step-arrow">→</div>
+
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <h3>AI 一键优化</h3>
+          <p>点击 AI 优化，大模型自动分析并提供改进建议；也可用提示词模板让 AI 帮你从头撰写。</p>
+        </div>
+
+        <div class="step-arrow">→</div>
+
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <h3>选模板 · 导出</h3>
+          <p>选择心仪的模板样式，实时预览排版效果，满意后一键导出精美 PDF。</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 模板展示 ===== -->
+  <section id="templates" class="templates-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>专业简历模板</h2>
+        <p>精心设计，适合各行各业</p>
+      </div>
+      <div class="template-grid">
+
+        <div class="template-card" data-name="经典商务">
+          <div class="tpl-preview tpl-classic">
+            <div class="tpl-header"></div>
+            <div class="tpl-body">
+              <div class="tpl-line"></div>
+              <div class="tpl-line tpl-short"></div>
+              <div class="tpl-line"></div>
+              <div class="tpl-line tpl-medium"></div>
+              <div class="tpl-line tpl-short"></div>
+            </div>
+          </div>
+          <div class="tpl-footer">
+            <span class="tpl-name">经典商务</span>
+            <span class="tpl-tag hot">热门</span>
+          </div>
+        </div>
+
+        <div class="template-card" data-name="现代分栏">
+          <div class="tpl-preview tpl-modern">
+            <div class="tpl-sidebar-left"></div>
+            <div class="tpl-body">
+              <div class="tpl-line"></div>
+              <div class="tpl-line tpl-short"></div>
+              <div class="tpl-line"></div>
+              <div class="tpl-line tpl-medium"></div>
+            </div>
+          </div>
+          <div class="tpl-footer">
+            <span class="tpl-name">现代分栏</span>
+          </div>
+        </div>
+
+        <div class="template-card" data-name="简约清晰">
+          <div class="tpl-preview tpl-minimal">
+            <div class="tpl-top-accent"></div>
+            <div class="tpl-body">
+              <div class="tpl-avatar-small"></div>
+              <div class="tpl-line"></div>
+              <div class="tpl-divider-line"></div>
+              <div class="tpl-line tpl-short"></div>
+              <div class="tpl-line tpl-medium"></div>
+            </div>
+          </div>
+          <div class="tpl-footer">
+            <span class="tpl-name">简约清晰</span>
+            <span class="tpl-tag new">新</span>
+          </div>
+        </div>
+
+        <div class="template-card" data-name="创意设计">
+          <div class="tpl-preview tpl-creative">
+            <div class="tpl-creative-header"></div>
+            <div class="tpl-body">
+              <div class="tpl-line"></div>
+              <div class="tpl-chip"></div>
+              <div class="tpl-line tpl-short"></div>
+              <div class="tpl-line tpl-medium"></div>
+            </div>
+          </div>
+          <div class="tpl-footer">
+            <span class="tpl-name">创意设计</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="text-center mt-40">
+        <a href="editor.html" class="btn btn-primary btn-lg">选择模板，开始编辑 →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-card">
+        <h2>准备好让你的简历脱颖而出了吗？</h2>
+        <p>免费使用 · 无需注册 · AI 实时优化</p>
+        <a href="editor.html" class="btn btn-white btn-lg">立即免费使用 →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">
+          <span class="logo-mark">✦</span>
+          <span>简历优化</span>
+        </a>
+        <p>AI 驱动的专业简历优化平台</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>产品</h4>
+          <a href="editor.html">在线编辑器</a>
+          <a href="#templates">简历模板</a>
+          <a href="#features">AI 优化</a>
+        </div>
+        <div class="footer-col">
+          <h4>资源</h4>
+          <a href="#">简历写作指南</a>
+          <a href="#">行业薪资报告</a>
+          <a href="#">面试技巧</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© 2026 简历优化. 保留所有权利.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

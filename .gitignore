@@ -1,0 +1,15 @@
+# !! 最重要 !! 包含 API Key，绝不能提交到 Git
+.env
+
+# Node.js 依赖
+node_modules/
+npm-debug.log*
+yarn-error.log
+
+# macOS
+.DS_Store
+.AppleDouble
+
+# 日志
+*.log
+logs/

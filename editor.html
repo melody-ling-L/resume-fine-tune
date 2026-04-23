@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>简历编辑器 — 简历优化</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/editor.css" />
+  <!-- html2pdf: 用于导出 PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+  <!-- pdf.js: 解析上传的 PDF 简历 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
+  <!-- mammoth.js: 解析上传的 Word 简历 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js" defer></script>
+</head>
+<body class="editor-body">
+
+  <!-- ===== 顶部导航 ===== -->
+  <header class="editor-header">
+    <div class="editor-header-left">
+      <a href="index.html" class="logo" title="返回首页">
+        <span class="logo-mark">✦</span>
+        <span>简历优化</span>
+      </a>
+      <span class="editor-breadcrumb">/ 在线编辑器</span>
+    </div>
+    <div class="editor-header-center">
+      <!-- 模板切换 -->
+      <div class="tpl-switcher">
+        <button class="tpl-btn active" data-tpl="classic">经典商务</button>
+        <button class="tpl-btn" data-tpl="modern">现代分栏</button>
+        <button class="tpl-btn" data-tpl="minimal">简约清晰</button>
+      </div>
+    </div>
+    <div class="editor-header-right">
+      <button class="btn btn-ghost btn-sm" id="btnLoadTemplate" title="使用示例模版快速填充内容">
+        📋 用模版
+      </button>
+      <input type="file" id="resumeFileInput" accept=".pdf,.doc,.docx" hidden />
+      <button class="btn btn-ghost btn-sm" id="btnSave" title="自动保存到本地">
+        💾 保存
+      </button>
+      <button class="btn btn-ghost btn-sm" id="btnClearAll" title="清空所有内容">
+        🗑️ 清空
+      </button>
+      <button class="btn btn-primary btn-sm" id="btnExportPDF">
+        📄 导出 PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== 主区域（三栏布局） ===== -->
+  <main class="editor-main">
+
+    <!-- ━━━ 左栏：表单输入区 ━━━ -->
+    <aside class="editor-sidebar" id="editorSidebar">
+
+      <!-- 拖拽上传区 -->
+      <div class="drop-zone" id="dropZone">
+        <div class="drop-zone-icon">📄</div>
+        <div class="drop-zone-text">拖拽简历到这里</div>
+        <div class="drop-zone-hint">支持 PDF / Word (.docx) · 或 <span class="drop-zone-click">点击选择文件</span></div>
+      </div>
+
+      <!-- 个人信息 -->
+      <div class="form-section" data-section="personal">
+        <div class="section-toggle">
+          <span class="section-icon">👤</span>
+          <span class="section-title">个人信息</span>
+          <span class="toggle-arrow">▼</span>
+        </div>
+        <div class="section-body">
+          <div class="form-row two-col">
+            <div class="form-group">
+              <label>姓名 *</label>
+              <input type="text" id="f-name" placeholder="张伟" data-field="personal.name" />
+            </div>
+            <div class="form-group">
+              <label>求职意向 *</label>
+              <input type="text" id="f-title" placeholder="前端工程师" data-field="personal.title" />
+            </div>
+          </div>
+          <div class="form-row two-col">
+            <div class="form-group">
+              <label>手机号</label>
+              <input type="tel" id="f-phone" placeholder="138-0000-0000" data-field="personal.phone" />
+            </div>
+            <div class="form-group">
+              <label>邮箱</label>
+              <input type="email" id="f-email" placeholder="hello@example.com" data-field="personal.email" />
+            </div>
+          </div>
+          <div class="form-row two-col">
+            <div class="form-group">
+              <label>所在城市</label>
+              <input type="text" id="f-location" placeholder="北京" data-field="personal.location" />
+            </div>
+            <div class="form-group">
+              <label>GitHub / 作品集</label>
+              <input type="text" id="f-github" placeholder="github.com/username" data-field="personal.github" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>个人简介 / 求职意向说明</label>
+            <textarea id="f-summary" rows="3" placeholder="用 2-3 句话介绍你的核心优势和职业目标..." data-field="personal.summary"></textarea>
+            <div class="field-actions">
+              <button class="ai-field-btn" data-prompt-type="summary">✨ AI 帮我写</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 工作经历 -->
+      <div class="form-section" data-section="experience">
+        <div class="section-toggle">
+          <span class="section-icon">💼</span>
+          <span class="section-title">工作经历</span>
+          <span class="toggle-arrow">▼</span>
+        </div>
+        <div class="section-body">
+          <div id="exp-list"></div>
+          <button class="add-item-btn" data-target="experience">
+            + 添加工作经历
+          </button>
+        </div>
+      </div>
+
+      <!-- 教育背景 -->
+      <div class="form-section" data-section="education">
+        <div class="section-toggle">
+          <span class="section-icon">🎓</span>
+          <span class="section-title">教育背景</span>
+          <span class="toggle-arrow">▼</span>
+        </div>
+        <div class="section-body">
+          <div id="edu-list"></div>
+          <button class="add-item-btn" data-target="education">
+            + 添加教育经历
+          </button>
+        </div>
+      </div>
+
+      <!-- 技能特长 -->
+      <div class="form-section" data-section="skills">
+        <div class="section-toggle">
+          <span class="section-icon">⚡</span>
+          <span class="section-title">技能特长</span>
+          <span class="toggle-arrow">▼</span>
+        </div>
+        <div class="section-body">
+          <div class="form-group">
+            <label>专业技能</label>
+            <textarea id="f-skills-tech" rows="3"
+              placeholder="JavaScript / TypeScript / React / Vue / Node.js / Git"
+              data-field="skills.tech"></textarea>
+            <div class="form-hint">用 / 或逗号分隔，将自动生成技能标签</div>
+          </div>
+          <div class="form-group">
+            <label>软技能 / 其他</label>
+            <textarea id="f-skills-soft" rows="2"
+              placeholder="团队协作 / 项目管理 / 英语 CET-6"
+              data-field="skills.soft"></textarea>
+          </div>
+          <div class="form-group">
+            <label>语言能力</label>
+            <input type="text" id="f-skills-lang" placeholder="普通话（母语）/ 英语（流利）"
+              data-field="skills.lang" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 项目经历 -->
+      <div class="form-section" data-section="projects">
+        <div class="section-toggle">
+          <span class="section-icon">🚀</span>
+          <span class="section-title">项目经历</span>
+          <span class="toggle-arrow">▼</span>
+        </div>
+        <div class="section-body">
+          <div id="proj-list"></div>
+          <button class="add-item-btn" data-target="projects">
+            + 添加项目
+          </button>
+        </div>
+      </div>
+
+      <!-- 荣誉奖项 -->
+      <div class="form-section" data-section="awards">
+        <div class="section-toggle">
+          <span class="section-icon">🏆</span>
+          <span class="section-title">荣誉奖项</span>
+          <span class="toggle-arrow">▼</span>
+        </div>
+        <div class="section-body">
+          <div id="award-list"></div>
+          <button class="add-item-btn" data-target="awards">
+            + 添加奖项
+          </button>
+        </div>
+      </div>
+
+    </aside><!-- end sidebar -->
+
+    <!-- ━━━ 中栏：实时预览区 ━━━ -->
+    <section class="editor-preview-wrapper">
+      <div class="preview-toolbar">
+        <span class="preview-label">👁 简历预览</span>
+        <div class="preview-zoom">
+          <button id="zoomOut" title="缩小">－</button>
+          <span id="zoomLevel">85%</span>
+          <button id="zoomIn" title="放大">＋</button>
+        </div>
+      </div>
+      <div class="preview-scroll">
+        <div class="preview-scale-wrapper" id="previewScaleWrapper">
+          <!-- 实际简历内容注入到这里 -->
+          <div id="resumePreview" class="resume-tpl tpl-classic-view">
+            <!-- 由 editor.js 动态渲染 -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ━━━ 右栏：AI 助手 ━━━ -->
+    <aside class="editor-ai-panel" id="aiPanel">
+
+      <!-- Tabs -->
+      <div class="ai-tabs">
+        <button class="ai-tab active" data-tab="score">📊 评分</button>
+        <button class="ai-tab" data-tab="ai">🤖 AI 优化</button>
+        <button class="ai-tab" data-tab="ats">🔍 ATS</button>
+        <button class="ai-tab" data-tab="prompts">📝 模板</button>
+      </div>
+
+      <!-- Tab: 评分 -->
+      <div class="ai-tab-content active" id="tab-score">
+        <div class="score-display">
+          <div class="big-score" id="bigScore">--</div>
+          <div class="score-sub">综合评分</div>
+        </div>
+        <div class="score-breakdown" id="scoreBreakdown">
+          <div class="breakdown-item">
+            <span class="bd-label">内容完整性</span>
+            <div class="bd-bar"><div class="bd-fill" style="width:0%" data-target="0"></div></div>
+            <span class="bd-val">0</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="bd-label">量化描述</span>
+            <div class="bd-bar"><div class="bd-fill" style="width:0%" data-target="0"></div></div>
+            <span class="bd-val">0</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="bd-label">技能关键词</span>
+            <div class="bd-bar"><div class="bd-fill" style="width:0%" data-target="0"></div></div>
+            <span class="bd-val">0</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="bd-label">格式规范</span>
+            <div class="bd-bar"><div class="bd-fill" style="width:0%" data-target="0"></div></div>
+            <span class="bd-val">0</span>
+          </div>
+        </div>
+        <button class="btn btn-primary w100" id="btnCalcScore">重新计算评分</button>
+        <div id="scoreAdvice" class="advice-list"></div>
+      </div>
+
+      <!-- Tab: AI 优化 -->
+      <div class="ai-tab-content" id="tab-ai">
+        <!-- 积分余额 -->
+        <div class="credits-panel">
+          <div class="credit-balance-row">
+            <div class="credit-info">
+              <span class="credit-num" id="creditNum">--</span>
+              <div class="credit-detail">
+                <span class="credit-label-main">积分余额</span>
+                <span class="credit-status" id="creditStatus">正在连接服务...</span>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" id="btnBuyCredits">💳 充值</button>
+          </div>
+          <div class="free-tier-note" id="freeTierNote" hidden>
+            🎉 新用户免费赠送 5 次 AI 优化体验
+          </div>
+        </div>
+
+        <!-- 优化选项 -->
+        <div class="ai-actions">
+          <p class="ai-actions-tip">选择要优化的部分：</p>
+          <div class="ai-action-grid">
+            <button class="ai-action-btn" data-action="optimize-summary">优化个人简介</button>
+            <button class="ai-action-btn" data-action="optimize-exp">优化工作经历</button>
+            <button class="ai-action-btn" data-action="optimize-proj">优化项目描述</button>
+            <button class="ai-action-btn" data-action="optimize-all">✨ 全文优化</button>
+          </div>
+        </div>
+
+        <!-- AI 输出区 -->
+        <div class="ai-output-area" id="aiOutputArea">
+          <div class="ai-output-placeholder">
+            <span>🤖</span>
+            <p>点击上方按钮，AI 将分析你的简历并给出优化建议</p>
+          </div>
+        </div>
+
+        <div class="ai-loading" id="aiLoading" hidden>
+          <div class="loading-spinner"></div>
+          <span>AI 正在分析中...</span>
+        </div>
+      </div>
+
+      <!-- Tab: ATS 分析 -->
+      <div class="ai-tab-content" id="tab-ats">
+        <div class="form-group">
+          <label>粘贴目标岗位 JD（职位描述）</label>
+          <textarea id="jdInput" rows="8" placeholder="将招聘 JD 粘贴到这里，AI 将自动提取关键词并与你的简历进行匹配分析..."></textarea>
+        </div>
+        <button class="btn btn-primary w100" id="btnAnalyzeATS">🔍 分析关键词匹配</button>
+
+        <div id="atsResult" class="ats-result" hidden>
+          <div class="ats-score-row">
+            <span>匹配度</span>
+            <span class="ats-score-num" id="atsScoreNum">0%</span>
+          </div>
+          <div class="ats-bar">
+            <div class="ats-bar-fill" id="atsBarFill" style="width:0%"></div>
+          </div>
+          <div class="ats-keywords-section">
+            <div class="kw-group">
+              <h4>✅ 已包含关键词</h4>
+              <div id="kwMatched" class="kw-tags"></div>
+            </div>
+            <div class="kw-group">
+              <h4>❌ 缺失关键词</h4>
+              <div id="kwMissing" class="kw-tags"></div>
+            </div>
+          </div>
+          <button class="btn btn-primary w100 mt-12" id="btnAtsOptimize">🤖 AI 帮我补充缺失关键词</button>
+        </div>
+      </div>
+
+      <!-- Tab: 提示词模板 -->
+      <div class="ai-tab-content" id="tab-prompts">
+        <p class="prompts-intro">选择一个提示词模板，填写关键信息后，AI 将为你生成专业内容 ✨</p>
+
+        <div class="prompt-list">
+
+          <div class="prompt-card" data-prompt="work-exp">
+            <div class="prompt-card-header">
+              <span class="prompt-icon">💼</span>
+              <strong>工作经历描述</strong>
+            </div>
+            <p>输入公司、职位、职责要点，AI 生成专业 STAR 格式描述</p>
+            <button class="btn btn-ghost btn-sm prompt-use-btn">使用此模板</button>
+          </div>
+
+          <div class="prompt-card" data-prompt="self-intro">
+            <div class="prompt-card-header">
+              <span class="prompt-icon">👤</span>
+              <strong>个人简介撰写</strong>
+            </div>
+            <p>输入行业、年限、核心技能，AI 生成吸引眼球的个人简介</p>
+            <button class="btn btn-ghost btn-sm prompt-use-btn">使用此模板</button>
+          </div>
+
+          <div class="prompt-card" data-prompt="project-desc">
+            <div class="prompt-card-header">
+              <span class="prompt-icon">🚀</span>
+              <strong>项目经历描述</strong>
+            </div>
+            <p>输入项目名称、技术栈、成果，AI 生成突出贡献的项目描述</p>
+            <button class="btn btn-ghost btn-sm prompt-use-btn">使用此模板</button>
+          </div>
+
+          <div class="prompt-card" data-prompt="skill-summary">
+            <div class="prompt-card-header">
+              <span class="prompt-icon">⚡</span>
+              <strong>技能亮点提炼</strong>
+            </div>
+            <p>输入技术清单，AI 帮你归纳提炼最吸引 HR 的技能表达方式</p>
+            <button class="btn btn-ghost btn-sm prompt-use-btn">使用此模板</button>
+          </div>
+
+        </div>
+      </div>
+
+    </aside><!-- end ai panel -->
+
+  </main>
+
+  <!-- ===== 定价弹窗 ===== -->
+  <div class="modal-overlay" id="pricingModal" hidden>
+    <div class="modal-box pricing-modal-box">
+      <div class="modal-header">
+        <h3>💎 购买积分</h3>
+        <button class="modal-close" id="pricingModalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="pricing-intro">新用户免费获得 5 次体验 · 用完后购买积分继续使用</p>
+        <div class="pricing-grid" id="pricingGrid">
+          <!-- 由 ai.js 动态渲染 -->
+        </div>
+        <div class="payment-contact" id="paymentContact" hidden></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 提示词填写弹窗 ===== -->
+  <div class="modal-overlay" id="promptModal" hidden>
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalTitle">提示词模板</h3>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- 动态注入表单 -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="modalCancel">取消</button>
+        <button class="btn btn-primary" id="modalGenerate">✨ AI 生成内容</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 模版选择弹窗 ===== -->
+  <div class="modal-overlay" id="templatePickerModal" hidden>
+    <div class="modal-box tpl-picker-box">
+      <div class="modal-header">
+        <h3>📋 选择示例模版</h3>
+        <button class="modal-close" id="templatePickerClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="tpl-picker-intro">选择与你职位相近的模版，一键填充所有字段，再根据实际情况修改</p>
+        <div class="tpl-cards-grid">
+          <div class="tpl-pick-card" data-tpl="engineer">
+            <div class="tpl-pick-icon">💻</div>
+            <div class="tpl-pick-name">Java 工程师</div>
+            <div class="tpl-pick-desc">3年工作经验 · 上海</div>
+            <button class="btn btn-primary btn-sm tpl-pick-btn">使用此模版</button>
+          </div>
+          <div class="tpl-pick-card" data-tpl="pm">
+            <div class="tpl-pick-icon">📊</div>
+            <div class="tpl-pick-name">产品经理</div>
+            <div class="tpl-pick-desc">5年B端SaaS · 北京</div>
+            <button class="btn btn-primary btn-sm tpl-pick-btn">使用此模版</button>
+          </div>
+          <div class="tpl-pick-card" data-tpl="graduate">
+            <div class="tpl-pick-icon">🎓</div>
+            <div class="tpl-pick-name">应届毕业生</div>
+            <div class="tpl-pick-desc">前端开发 · 深圳</div>
+            <button class="btn btn-primary btn-sm tpl-pick-btn">使用此模版</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 上传处理遮罩 ===== -->
+  <div class="upload-overlay" id="uploadOverlay" hidden>
+    <div class="upload-overlay-box">
+      <div class="upload-spinner"></div>
+      <div class="upload-status" id="uploadStatus">正在读取文件...</div>
+    </div>
+  </div>
+
+  <!-- ===== Toast 提示 ===== -->
+  <div class="toast" id="toast" hidden></div>
+
+  <!-- ===== 脚本 ===== -->
+  <script src="js/ats.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/editor.js"></script>
+</body>
+</html>
