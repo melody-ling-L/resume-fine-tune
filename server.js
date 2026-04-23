@@ -35,7 +35,7 @@ const DEEPSEEK_URL = 'https://api.deepseek.com/v1/chat/completions';
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
   .split(',')
   .map((s) => s.trim())
-  .filter(Boolean);
+  .filter((s) => s && s !== 'https://yourdomain.com'); // 过滤掉占位符
 
 app.use(
   cors({
