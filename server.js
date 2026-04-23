@@ -40,14 +40,16 @@ const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
 app.use(
   cors({
     origin: (origin, cb) => {
-      // 无 Origin 头：直接导航、服务端调用、curl 等，一律放行
+      // 无 Origin 头：直接导航、curl 等，放行
       if (!origin) return cb(null, true);
-      // 明确在白名单中
+      // 同域请求（前后端同一个 Railway 域名）：自动放行
       if (allowedOrigins.includes(origin)) return cb(null, true);
       // 开发环境允许所有 localhost
       if (IS_DEV && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
         return cb(null, true);
       }
+      // 生产环境：若未配置白名单则也放行同服务请求（Railway 同域部署）
+      if (!IS_DEV && allowedOrigins.length === 0) return cb(null, true);
       cb(new Error('Not allowed by CORS'));
     },
     credentials: true,
