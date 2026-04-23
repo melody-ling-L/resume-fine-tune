@@ -1169,7 +1169,9 @@ function initUpload() {
 }
 
 async function handleFileUpload(file) {
-  const backendUrl = window.location.port === '3000' ? '' : 'http://localhost:3000';
+  const backendUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? `http://localhost:${window.location.port || 3000}`
+    : '';
   const token = localStorage.getItem('jy_session_token') || '';
   const overlay = document.getElementById('uploadOverlay');
   const statusEl = document.getElementById('uploadStatus');

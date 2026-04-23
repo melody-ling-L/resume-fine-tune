@@ -8,7 +8,10 @@
 // ───────────────────────────────────────────
 // 通过 Node 服务器访问时（port=3000）用相对路径
 // 使用 Live Server 等工具时指向后端地址
-const BACKEND_URL = window.location.port === '3000' ? '' : 'http://localhost:3000';
+// 前后端同域部署（Railway/生产）时用相对路径；本地直接打开 HTML 文件时指向本地服务
+const BACKEND_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? `http://localhost:${window.location.port || 3000}`
+  : '';
 
 const SESSION_KEY = 'jy_session_token';
 let sessionToken = localStorage.getItem(SESSION_KEY) || '';
